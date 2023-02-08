@@ -1,13 +1,6 @@
-import {
-	constrainRange,
-	Controller,
-	PointerHandler,
-	PointerHandlerEvent,
-	Value,
-	ViewProps,
-} from '@tweakpane/core';
+import { Controller, PointerHandler, PointerHandlerEvent, Value, ViewProps, constrainRange } from '@tweakpane/core';
 
-import {PluginView} from './view';
+import { PluginView } from './view';
 
 interface Config {
 	value: Value<number>;
@@ -53,8 +46,7 @@ export class PluginController implements Controller<PluginView> {
 		}
 
 		// Update the value by user input
-		const dx =
-			constrainRange(data.point.x / data.bounds.width + 0.05, 0, 1) * 10;
+		const dx = constrainRange(data.point.x / data.bounds.width + 0.05, 0, 1) * 10;
 		const dy = data.point.y / 10;
 		this.value.rawValue = Math.floor(dy) * 10 + dx;
 	}

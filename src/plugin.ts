@@ -2,14 +2,14 @@ import {
 	BaseInputParams,
 	BindingTarget,
 	CompositeConstraint,
-	createRangeConstraint,
-	createStepConstraint,
 	InputBindingPlugin,
 	ParamsParsers,
+	createRangeConstraint,
+	createStepConstraint,
 	parseParams,
 } from '@tweakpane/core';
 
-import {PluginController} from './controller';
+import { PluginController } from './controller';
 
 export interface PluginInputParams extends BaseInputParams {
 	max?: number;
@@ -25,12 +25,8 @@ export interface PluginInputParams extends BaseInputParams {
 // - converts `Ex` into `In` and holds it
 // - P is the type of the parsed parameters
 //
-export const TemplateInputPlugin: InputBindingPlugin<
-	number,
-	number,
-	PluginInputParams
-> = {
-	id: 'input-template',
+export const TemplateInputPlugin: InputBindingPlugin<number, number, PluginInputParams> = {
+	id: 'multiblade',
 
 	// type: The plugin type.
 	// - 'input': Input binding

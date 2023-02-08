@@ -6,15 +6,14 @@ module.exports = {
 		'plugin:prettier/recommended',
 	],
 	parser: '@typescript-eslint/parser',
-	plugins: ['@typescript-eslint', 'simple-import-sort'],
+	plugins: ['@typescript-eslint'],
 	root: true,
 	rules: {
 		camelcase: 'off',
 		'no-unused-vars': 'off',
-		'sort-imports': 'off',
+		'sort-imports': 'error',
 
 		'prettier/prettier': 'error',
-		'simple-import-sort/imports': 'error',
 		'@typescript-eslint/naming-convention': [
 			'error',
 			{
