@@ -1,8 +1,8 @@
 {
-  "name": "tweakpane-plugin-template",
+  "name": "tweakpane-multiblade",
   "version": "0.0.0",
-  "description": "Plugin template for Tweakpane",
-  "main": "dist/tweakpane-plugin-template.js",
+  "description": "Blade multiplexer plugin for Tweakpane",
+  "main": "dist/tweakpane-multiblade.js",
   "types": "dist/types/index.d.ts",
   "author": "cocopon",
   "license": "MIT",
