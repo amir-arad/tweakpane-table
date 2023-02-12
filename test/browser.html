@@ -1,31 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<title></title>
-	</head>
-	<body>
-		<script src="../node_modules/tweakpane/dist/tweakpane.js"></script>
-		<script src="../dist/tweakpane-multiblade.js"></script>
-		<script>
-			const params = {
-				prop: 3,
-			};
-			const pane = new Tweakpane.Pane();
+    <head>
+        <meta charset="UTF-8" />
+        <title></title>
+        <style>
+            /* https://github.com/cocopon/tweakpane/issues/46#issuecomment-633388907 */
 
-			// Register plugin
-			pane.registerPlugin(TweakpaneMultibladePlugin);
+            /* Default wrapper view */
+            .yourCustomContainer {
+                width: 100%;
+            }
+            /* Input and monitor view */
+            .yourCustomContainer .tp-lblv_v {
+                min-width: calc(((160px + var(--cnt-h-p)) * 2) - var(--cnt-h-p));
+                /* min-width: 324px; */
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../node_modules/tweakpane/dist/tweakpane.js"></script>
+        <script src="../dist/tweakpane-multiblade.js"></script>
+        <script>
+            const rootElm = document.createElement('div');
+            rootElm.classList = 'yourCustomContainer';
+            document.body.appendChild(rootElm);
+            const params = {
+                prop: 3,
+            };
+            const pane = new Tweakpane.Pane({ container: rootElm, title: 'testing' });
 
-			// TODO: Update parameters for your plugin
-			pane
-				.addInput(params, 'prop', {
-					view: 'dots',
-				})
-				.on('change', (ev) => {
-					console.log(ev.value);
-				});
+            const mbp = TweakpaneMultibladePlugin.multiBladePlugin('foo');
 
-			window.pane = pane;
-		</script>
-	</body>
+            // Register plugin
+            pane.registerPlugin(mbp);
+
+            pane.addBlade({
+                view: 'multiblade', // TODO: custom view id
+                label: 'row 1',
+                blades: [
+                    {
+                        view: 'text',
+                        label: 'name',
+                        parse: (v) => String(v),
+                        value: 'sketch-01',
+                    },
+                    {
+                        view: 'list',
+                        label: 'scene',
+                        options: [
+                            { text: 'loading', value: 'LDG' },
+                            { text: 'menu', value: 'MNU' },
+                            { text: 'field', value: 'FLD' },
+                        ],
+                        value: 'LDG',
+                    },
+                ],
+            });
+            pane.addBlade({
+                view: 'multiblade', // TODO: custom view id
+                label: 'row 2',
+                blades: [
+                    {
+                        view: 'text',
+                        label: 'name',
+                        parse: (v) => String(v),
+                        value: 'sketch-01',
+                    },
+                    {
+                        view: 'list',
+                        label: 'scene',
+                        options: [
+                            { text: 'loading', value: 'LDG' },
+                            { text: 'menu', value: 'MNU' },
+                            { text: 'field', value: 'FLD' },
+                        ],
+                        value: 'LDG',
+                    },
+                ],
+            });
+            pane.addBlade({
+                view: 'text',
+                label: 'name',
+                parse: (v) => String(v),
+                value: 'sketch-01',
+            });
+            pane.addBlade({
+                view: 'list',
+                label: 'scene',
+                options: [
+                    { text: 'loading', value: 'LDG' },
+                    { text: 'menu', value: 'MNU' },
+                    { text: 'field', value: 'FLD' },
+                ],
+                value: 'LDG',
+            });
+            window.pane = pane;
+        </script>
+    </body>
 </html>

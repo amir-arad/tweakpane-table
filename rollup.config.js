@@ -1,14 +1,13 @@
 import Alias from '@rollup/plugin-alias';
-import {nodeResolve} from '@rollup/plugin-node-resolve';
-import Replace from '@rollup/plugin-replace';
-import Typescript from '@rollup/plugin-typescript';
 import Autoprefixer from 'autoprefixer';
-import Postcss from 'postcss';
 import Cleanup from 'rollup-plugin-cleanup';
-import {terser as Terser} from 'rollup-plugin-terser';
-import Sass from 'sass';
-
 import Package from './package.json';
+import Postcss from 'postcss';
+import Replace from '@rollup/plugin-replace';
+import Sass from 'sass';
+import { terser as Terser } from 'rollup-plugin-terser';
+import Typescript from '@rollup/plugin-typescript';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 async function compileCss() {
 	const css = Sass.renderSync({
@@ -69,9 +68,7 @@ function getUmdName(packageName) {
 	return (
 		packageName
 			.split(/[@/-]/)
-			.map((comp) =>
-				comp !== 'plugin' ? comp.charAt(0).toUpperCase() + comp.slice(1) : '',
-			)
+			.map((comp) => (comp !== 'plugin' ? comp.charAt(0).toUpperCase() + comp.slice(1) : ''))
 			.join('') + 'Plugin'
 	);
 }
