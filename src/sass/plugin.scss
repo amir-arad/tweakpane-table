@@ -2,44 +2,54 @@
 @import '../../node_modules/@tweakpane/core/lib/sass/plugin';
 
 // Additional style for the plugin
-.#{$prefix}-tmpv .tp-rotv {
+.#{$prefix}-rowv .tp-rotv {
 	box-shadow: none;
 }
 
-.#{$prefix}-tmpv .tp-brkv {
+.#{$prefix}-rowv .tp-brkv {
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: row;
+	flex-wrap: nowrap;
 	width: fit-content;
 	background-color: transparent;
 
 }
+// internal table row
+.#{$prefix}-rowv .tp-rotv_c{
+	margin-top: 0px;
+	width: 100%;
+}
 
-.#{$prefix}-tmpv .tp-lblv{
+// cell (outer)
+.#{$prefix}-rowv .tp-rotv_c>*{
+	margin-top: 0px;
+	width: 50%;
+}
+
+// cell label
+.#{$prefix}-rowv .tp-lblv_l{
+	display:none;
+}
+
+// cell value
+.#{$prefix}-rowv .tp-lblv{
 	padding-left:0px;
 }
-.#{$prefix}-tmpv .tp-lblv.tp-v-lst{
+// last cell value
+.#{$prefix}-rowv .tp-lblv.tp-v-lst{
 	padding-right:0px;
 }
 
-.#{$prefix}-tmpv .tp-lblv_l{
-	display:none;
-}
-
-.#{$prefix}-tmpv .tp-lblv_l{
-	display:none;
-}
-
-.#{$prefix}-tmpv .tp-lblv_v{
+.#{$prefix}-rowv .tp-lblv_v{
 	min-width: auto;
 	flex: 1;
+	// flex-basis: 0;
 }
 
-.#{$prefix}-tmpv .tp-rotv_c>*{
-	margin-top: 0px;
-}
 
-.#{$prefix}-tmpv .tp-rotv.tp-rotv-expanded .tp-rotv_c, 
-.#{$prefix}-tmpv .tp-fldv.tp-fldv-expanded>.tp-fldv_c{
+
+.#{$prefix}-rowv .tp-rotv.tp-rotv-expanded .tp-rotv_c, 
+.#{$prefix}-rowv .tp-fldv.tp-fldv-expanded>.tp-fldv_c{
 	padding-bottom: 0px;
 	padding-top: 0px;
 }

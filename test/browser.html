@@ -13,7 +13,6 @@
             /* Input and monitor view */
             .yourCustomContainer .tp-lblv_v {
                 min-width: calc(((160px + var(--cnt-h-p)) * 2) - var(--cnt-h-p));
-                /* min-width: 324px; */
             }
         </style>
     </head>
@@ -29,37 +28,13 @@
             };
             const pane = new Tweakpane.Pane({ container: rootElm, title: 'testing' });
 
-            const mbp = TweakpaneMultibladePlugin.multiBladePlugin('foo');
-
             // Register plugin
-            pane.registerPlugin(mbp);
+            pane.registerPlugin(TweakpaneMultibladePlugin.tableRowPlugin());
 
             pane.addBlade({
-                view: 'multiblade', // TODO: custom view id
+                view: 'tableRow',
                 label: 'row 1',
-                blades: [
-                    {
-                        view: 'text',
-                        label: 'name',
-                        parse: (v) => String(v),
-                        value: 'sketch-01',
-                    },
-                    {
-                        view: 'list',
-                        label: 'scene',
-                        options: [
-                            { text: 'loading', value: 'LDG' },
-                            { text: 'menu', value: 'MNU' },
-                            { text: 'field', value: 'FLD' },
-                        ],
-                        value: 'LDG',
-                    },
-                ],
-            });
-            pane.addBlade({
-                view: 'multiblade', // TODO: custom view id
-                label: 'row 2',
-                blades: [
+                cells: [
                     {
                         view: 'text',
                         label: 'name',
