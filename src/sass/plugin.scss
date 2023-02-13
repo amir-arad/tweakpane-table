@@ -13,46 +13,45 @@
 	flex-wrap: nowrap;
 	width: fit-content;
 	background-color: transparent;
-
 }
 // internal table row
-.#{$prefix}-tablev .tp-rotv_c{
+.#{$prefix}-tablev .tp-rotv_c {
 	margin-top: 0px;
 	width: 100%;
 }
 
 // cell (outer)
-.#{$prefix}-tablev .tp-rotv_c>*{
+.#{$prefix}-tablev .tp-rotv_c > * {
 	margin-top: 0px;
 }
 
 // cell (inner)
-.#{$prefix}-tablev .tp-lblv{
-	padding-left:0px;
+.#{$prefix}-tablev .tp-lblv {
+	padding-left: 0px;
 }
 // last cell (inner)
-.#{$prefix}-tablev .tp-lblv.tp-v-lst{
-	padding-right:0px;
+.#{$prefix}-tablev .tp-lblv.tp-v-lst {
+	padding-right: 0px;
 }
 
 // cell label in table row
-.#{$prefix}-rowv .tp-lblv_l{
-	display:none;
+.#{$prefix}-rowv .tp-lblv_l {
+	display: none;
 }
 
 // cell value in table head
-.#{$prefix}-headv .tp-lblv_v{
-	display:none;
+.#{$prefix}-headv .tp-lblv_v {
+	display: none;
 }
 
-// cell value 
-.#{$prefix}-tablev .tp-lblv_v{
+// cell value
+.#{$prefix}-tablev .tp-lblv_v {
 	min-width: auto;
 	flex: 1;
 }
 
-.#{$prefix}-tablev .tp-rotv.tp-rotv-expanded .tp-rotv_c, 
-.#{$prefix}-tablev .tp-fldv.tp-fldv-expanded>.tp-fldv_c{
+.#{$prefix}-tablev .tp-rotv.tp-rotv-expanded .tp-rotv_c,
+.#{$prefix}-tablev .tp-fldv.tp-fldv-expanded > .tp-fldv_c {
 	padding-bottom: 0px;
 	padding-top: 0px;
 }
