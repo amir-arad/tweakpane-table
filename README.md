@@ -47,7 +47,7 @@ pane.registerPlugin(TweakpaneTablePlugin);
 ```
 
 ## Usage
-
+Headers are just labels, Cells are just blades.
 ```js
 // add header row
 pane.addBlade({
