@@ -59,7 +59,7 @@ export function tableRowPlugin() {
 			if (!(args.controller.valueController instanceof RowController)) {
 				return null;
 			}
-			return new RowApi(args.controller);
+			return new BladeApi<LabelController<RowController>>(args.controller);
 		},
 	};
 	return {
@@ -97,8 +97,6 @@ export class RowController implements Controller<RowView> {
 		});
 	}
 }
-
-export class RowApi extends BladeApi<LabelController<RowController>> {}
 
 // Create a class name generator from the view name
 // ClassName('tmp') will generate a CSS class name like `tp-tmpv`

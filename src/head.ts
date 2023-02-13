@@ -64,7 +64,7 @@ export const tableHeadPlugin: BladePlugin<TableHeadParams> = {
 		if (!(args.controller.valueController instanceof TableHeadController)) {
 			return null;
 		}
-		return new RowApi(args.controller);
+		return new BladeApi<LabelController<TableHeadController>>(args.controller);
 	},
 };
 
@@ -73,8 +73,8 @@ interface HeadConfig {
 }
 
 // Custom controller class should implement `Controller` interface
-export class TableHeadController implements Controller<RowView> {
-	public readonly view: RowView;
+export class TableHeadController implements Controller<HeadView> {
+	public readonly view: HeadView;
 	public readonly viewProps: ViewProps;
 	public readonly headers: Pane;
 
@@ -84,7 +84,7 @@ export class TableHeadController implements Controller<RowView> {
 		// and also view props
 		this.viewProps = config.viewProps;
 		// Create a custom view
-		this.view = new RowView(doc, {
+		this.view = new HeadView(doc, {
 			viewProps: this.viewProps,
 		});
 		this.headers = new Pane({ container: this.view.element });
@@ -100,15 +100,13 @@ export class TableHeadController implements Controller<RowView> {
 	}
 }
 
-export class RowApi extends BladeApi<LabelController<TableHeadController>> {}
-
 // Create a class name generator from the view name
 // ClassName('tmp') will generate a CSS class name like `tp-tmpv`
 const className1 = ClassName('table');
 const className2 = ClassName('head');
 
 // Custom view class should implement `View` interface
-export class RowView implements View {
+export class HeadView implements View {
 	public readonly element: HTMLElement;
 
 	constructor(doc: Document, config: HeadConfig) {

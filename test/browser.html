@@ -22,7 +22,7 @@
     </head>
     <body>
         <script src="../node_modules/tweakpane/dist/tweakpane.js"></script>
-        <script src="../dist/tweakpane-multiblade.js"></script>
+        <script src="../dist/tweakpane-table.js"></script>
         <script>
             const rootElm = document.createElement('div');
             rootElm.classList = 'myCustomContainer';
@@ -33,7 +33,7 @@
             const pane = new Tweakpane.Pane({ container: rootElm });
 
             // Register plugin
-            pane.registerPlugin(TweakpaneMultibladePlugin);
+            pane.registerPlugin(TweakpaneTablePlugin);
 
             pane.addBlade({
                 view: 'tableHead',
