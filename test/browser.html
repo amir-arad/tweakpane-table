@@ -12,7 +12,8 @@
             }
             /* Input and monitor view */
             .yourCustomContainer .tp-lblv_v {
-                min-width: calc(((160px + var(--cnt-h-p)) * 2) - var(--cnt-h-p));
+                /* min-width: calc(((160px + var(--cnt-h-p)) * 2) - var(--cnt-h-p)); */
+                min-width: fit-content;
             }
         </style>
     </head>
@@ -37,13 +38,13 @@
                 cells: [
                     {
                         view: 'text',
-                        label: 'name',
+                        width: '80px',
                         parse: (v) => String(v),
                         value: 'sketch-01',
                     },
                     {
                         view: 'list',
-                        label: 'scene',
+                        width: '160px',
                         options: [
                             { text: 'loading', value: 'LDG' },
                             { text: 'menu', value: 'MNU' },

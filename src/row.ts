@@ -19,7 +19,11 @@ import { Pane } from 'tweakpane';
 export interface RowInputParams extends BaseBladeParams {
 	view: 'tableRow';
 	label: string;
-	cells: Array<BaseBladeParams>;
+	cells: Array<CellBladeParams>;
+}
+
+export interface CellBladeParams extends BaseBladeParams {
+	width?: string;
 }
 
 export function tableRowPlugin() {
@@ -82,7 +86,7 @@ export class RowController implements Controller<RowView> {
 	public readonly viewProps: ViewProps;
 	public readonly cells: Cells;
 
-	constructor(doc: Document, config: RowConfig, cellsParams: BaseBladeParams[]) {
+	constructor(doc: Document, config: RowConfig, cellsParams: CellBladeParams[]) {
 		// Receive the bound value from the plugin
 
 		// and also view props
@@ -93,7 +97,10 @@ export class RowController implements Controller<RowView> {
 		});
 		this.cells = new Cells({ container: this.view.element });
 		for (const cellParams of cellsParams) {
-			this.cells.addBlade(cellParams);
+			const api = this.cells.addBlade(cellParams);
+			if (cellParams.width) {
+				api.element.style.width = cellParams.width;
+			}
 		}
 		this.viewProps.handleDispose(() => {
 			this.cells.dispose();
