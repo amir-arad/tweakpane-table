@@ -4,18 +4,15 @@
         <meta charset="UTF-8" />
         <title></title>
         <style>
-            /* 
-                size manipulation according to: 
-                https://github.com/cocopon/tweakpane/issues/46#issuecomment-633388907 
-            */
+            /* size manipulation according to: https://github.com/cocopon/tweakpane/issues/46#issuecomment-633388907  */
 
             /* Default wrapper view */
-            .myCustomContainer {
+            .tableContainer {
                 width: 350px;
             }
 
             /* Blades view */
-            .myCustomContainer .tp-lblv_v {
+            .tableContainer .tp-lblv_v {
                 min-width: fit-content;
             }
         </style>
@@ -25,12 +22,14 @@
         <script src="../dist/tweakpane-table.js"></script>
         <script>
             const rootElm = document.createElement('div');
-            rootElm.classList = 'myCustomContainer';
+            rootElm.classList = 'tableContainer';
             document.body.appendChild(rootElm);
             const params = {
                 prop: 3,
             };
-            const pane = new Tweakpane.Pane({ container: rootElm });
+            // const pane = new Tweakpane.Pane({ container: rootElm });
+            const pane = new Tweakpane.Pane();
+            pane.element.parentElement.classList = 'tableContainer';
 
             // Register plugin
             pane.registerPlugin(TweakpaneTablePlugin);

@@ -1,6 +1,6 @@
 # tweakpane-table
 
-Blade multiplexer plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
+Table plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
 
 # For plugin users
 
@@ -9,11 +9,21 @@ Blade multiplexer plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
 ### Browser
 
 ```html
+<style>
+    /* size manipulation according to: https://github.com/cocopon/tweakpane/issues/46#issuecomment-633388907  */
+    .tableContainer {
+        width: 350px; /* give enough space for all cells */
+    }
+    .tableContainer .tp-lblv_v {
+        min-width: fit-content; /* don't cut off cells */
+    }
+</style>
 <script src="tweakpane.min.js"></script>
-<script src="tweakpane-plugin-template.min.js"></script>
+<script src="tweakpane-table.min.js"></script>
 <script>
     const pane = new Tweakpane.Pane();
-    pane.registerPlugin(TweakpaneTemplatePlugin);
+    pane.element.parentElement.classList = 'tableContainer';
+    pane.registerPlugin(TweakpaneTablePlugin);
 </script>
 ```
 
@@ -21,53 +31,56 @@ Blade multiplexer plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
 
 ```js
 import { Pane } from 'tweakpane';
-import * as TemplatePlugin from 'tweakpane-plugin-template';
-
+import * as TweakpaneTablePlugin from 'tweakpane-table';
+const style = document.createElement('style');
+style.innerHTML = `
+    .tableContainer {
+        width: 350px;
+    }
+    .tableContainer .tp-lblv_v {
+        min-width: fit-content;
+    }
+`;
+document.head.appendChild(style);
 const pane = new Pane();
-pane.registerPlugin(TemplatePlugin);
+pane.element.parentElement.classList = 'tableContainer';
+pane.registerPlugin(TweakpaneTablePlugin);
 ```
 
 ## Usage
 
 ```js
-const params = {
-    prop: 3,
-};
-
-// TODO: Update parameters for your plugin
-pane.addInput(params, 'prop', {
-    view: 'dots',
-}).on('change', (ev) => {
-    console.log(ev.value);
+// add header row
+pane.addBlade({
+    view: 'tableHead',
+    label: 'Label',
+    headers: [
+        { label: 'Text', width: '80px' },
+        { label: 'List', width: '160px' },
+    ],
 });
-```
 
-# For plugin developers
-
-TODO: Delete this section before publishing your plugin.
-
-## Quick start
-
--   Install dependencies:
-    ```
-    % npm install
-    ```
--   Build source codes and watch changes:
-    ```
-    % npm start
-    ```
--   Open `test/browser.html` to see the result.
-
-## File structure
-
-```
-┣ src
-┃  ┣ sass ............ Plugin CSS
-┃  ┣ index.ts ........ Entrypoint
-┃  ┣ plugin.ts ....... Plugin
-┃  ┣ controller.ts ... Controller for the custom view
-┃  ┕ view.ts ......... Custom view
-┣ dist ............... Compiled files
-┕ test
-   ┕ browser.html .... Plugin labo
+// add cells row
+pane.addBlade({
+    view: 'tableRow',
+    label: 'row 1',
+    cells: [
+        {
+            view: 'text',
+            width: '80px',
+            parse: (v) => String(v),
+            value: 'sketch-01',
+        },
+        {
+            view: 'list',
+            width: '160px',
+            options: [
+                { text: 'loading', value: 'LDG' },
+                { text: 'menu', value: 'MNU' },
+                { text: 'field', value: 'FLD' },
+            ],
+            value: 'LDG',
+        },
+    ],
+});
 ```
