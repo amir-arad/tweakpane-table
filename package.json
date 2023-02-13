@@ -1,10 +1,11 @@
 {
     "name": "tweakpane-table",
     "version": "0.1.0",
-    "description": "Blade multiplexer plugin for Tweakpane",
+    "description": "Table plugin for Tweakpane",
+    "repository": "git@github.com:amir-arad/tweakpane-table.git",
     "main": "dist/tweakpane-table.js",
     "types": "dist/types/index.d.ts",
-    "author": "cocopon",
+    "author": "amir-arad <greenshade@gmail.com>",
     "license": "MIT",
     "files": [
         "dist"
