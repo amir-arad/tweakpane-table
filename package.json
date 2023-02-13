@@ -1,6 +1,6 @@
 {
     "name": "tweakpane-table",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "description": "Blade multiplexer plugin for Tweakpane",
     "main": "dist/tweakpane-table.js",
     "types": "dist/types/index.d.ts",
