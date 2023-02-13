@@ -4,15 +4,18 @@
         <meta charset="UTF-8" />
         <title></title>
         <style>
-            /* https://github.com/cocopon/tweakpane/issues/46#issuecomment-633388907 */
+            /* 
+                size manipulation according to: 
+                https://github.com/cocopon/tweakpane/issues/46#issuecomment-633388907 
+            */
 
             /* Default wrapper view */
-            .yourCustomContainer {
-                width: 100%;
+            .myCustomContainer {
+                width: 350px;
             }
-            /* Input and monitor view */
-            .yourCustomContainer .tp-lblv_v {
-                /* min-width: calc(((160px + var(--cnt-h-p)) * 2) - var(--cnt-h-p)); */
+
+            /* Blades view */
+            .myCustomContainer .tp-lblv_v {
                 min-width: fit-content;
             }
         </style>
@@ -22,15 +25,24 @@
         <script src="../dist/tweakpane-multiblade.js"></script>
         <script>
             const rootElm = document.createElement('div');
-            rootElm.classList = 'yourCustomContainer';
+            rootElm.classList = 'myCustomContainer';
             document.body.appendChild(rootElm);
             const params = {
                 prop: 3,
             };
-            const pane = new Tweakpane.Pane({ container: rootElm, title: 'testing' });
+            const pane = new Tweakpane.Pane({ container: rootElm });
 
             // Register plugin
-            pane.registerPlugin(TweakpaneMultibladePlugin.tableRowPlugin());
+            pane.registerPlugin(TweakpaneMultibladePlugin);
+
+            pane.addBlade({
+                view: 'tableHead',
+                label: 'Label',
+                headers: [
+                    { label: 'Text', width: '80px' },
+                    { label: 'List', width: '160px' },
+                ],
+            });
 
             pane.addBlade({
                 view: 'tableRow',
@@ -55,20 +67,26 @@
                 ],
             });
             pane.addBlade({
-                view: 'text',
-                label: 'name',
-                parse: (v) => String(v),
-                value: 'sketch-01',
-            });
-            pane.addBlade({
-                view: 'list',
-                label: 'scene',
-                options: [
-                    { text: 'loading', value: 'LDG' },
-                    { text: 'menu', value: 'MNU' },
-                    { text: 'field', value: 'FLD' },
+                view: 'tableRow',
+                label: 'row 2',
+                cells: [
+                    {
+                        view: 'text',
+                        width: '80px',
+                        parse: (v) => String(v),
+                        value: 'sketch-02',
+                    },
+                    {
+                        view: 'list',
+                        width: '160px',
+                        options: [
+                            { text: 'loading', value: 'LDG' },
+                            { text: 'menu', value: 'MNU' },
+                            { text: 'field', value: 'FLD' },
+                        ],
+                        value: 'MNU',
+                    },
                 ],
-                value: 'LDG',
             });
             window.pane = pane;
         </script>

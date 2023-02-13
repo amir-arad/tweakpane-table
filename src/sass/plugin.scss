@@ -2,11 +2,12 @@
 @import '../../node_modules/@tweakpane/core/lib/sass/plugin';
 
 // Additional style for the plugin
-.#{$prefix}-rowv .tp-rotv {
+
+.#{$prefix}-tablev .tp-rotv {
 	box-shadow: none;
 }
 
-.#{$prefix}-rowv .tp-brkv {
+.#{$prefix}-tablev .tp-brkv {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
@@ -15,40 +16,43 @@
 
 }
 // internal table row
-.#{$prefix}-rowv .tp-rotv_c{
+.#{$prefix}-tablev .tp-rotv_c{
 	margin-top: 0px;
 	width: 100%;
 }
 
 // cell (outer)
-.#{$prefix}-rowv .tp-rotv_c>*{
+.#{$prefix}-tablev .tp-rotv_c>*{
 	margin-top: 0px;
 }
 
-// cell label
+// cell (inner)
+.#{$prefix}-tablev .tp-lblv{
+	padding-left:0px;
+}
+// last cell (inner)
+.#{$prefix}-tablev .tp-lblv.tp-v-lst{
+	padding-right:0px;
+}
+
+// cell label in table row
 .#{$prefix}-rowv .tp-lblv_l{
 	display:none;
 }
 
-// cell value
-.#{$prefix}-rowv .tp-lblv{
-	padding-left:0px;
-}
-// last cell value
-.#{$prefix}-rowv .tp-lblv.tp-v-lst{
-	padding-right:0px;
+// cell value in table head
+.#{$prefix}-headv .tp-lblv_v{
+	display:none;
 }
 
-.#{$prefix}-rowv .tp-lblv_v{
+// cell value 
+.#{$prefix}-tablev .tp-lblv_v{
 	min-width: auto;
 	flex: 1;
-	// flex-basis: 0;
 }
 
-
-
-.#{$prefix}-rowv .tp-rotv.tp-rotv-expanded .tp-rotv_c, 
-.#{$prefix}-rowv .tp-fldv.tp-fldv-expanded>.tp-fldv_c{
+.#{$prefix}-tablev .tp-rotv.tp-rotv-expanded .tp-rotv_c, 
+.#{$prefix}-tablev .tp-fldv.tp-fldv-expanded>.tp-fldv_c{
 	padding-bottom: 0px;
 	padding-top: 0px;
 }

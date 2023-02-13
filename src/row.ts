@@ -7,7 +7,6 @@ import {
 	LabelController,
 	LabelPropsObject,
 	ParamsParsers,
-	PluginPool,
 	ValueMap,
 	View,
 	ViewProps,
@@ -16,7 +15,7 @@ import {
 
 import { Pane } from 'tweakpane';
 
-export interface RowInputParams extends BaseBladeParams {
+export interface TableRowParams extends BaseBladeParams {
 	view: 'tableRow';
 	label: string;
 	cells: Array<CellBladeParams>;
@@ -27,7 +26,7 @@ export interface CellBladeParams extends BaseBladeParams {
 }
 
 export function tableRowPlugin() {
-	const plugin: BladePlugin<RowInputParams> = {
+	const plugin: BladePlugin<TableRowParams> = {
 		id: 'tableRowPlugin',
 		type: 'blade',
 		// This plugin template injects a compiled CSS by @rollup/plugin-replace
@@ -36,7 +35,7 @@ export function tableRowPlugin() {
 
 		accept(params: Record<string, unknown>) {
 			const p = ParamsParsers;
-			const result = parseParams<RowInputParams>(params, {
+			const result = parseParams<TableRowParams>(params, {
 				view: p.required.constant('tableRow'),
 				label: p.required.string,
 				cells: p.required.array(p.required.custom<BaseBladeParams>((p) => p as BaseBladeParams)), // TODO validate against plugin pool
@@ -67,15 +66,6 @@ export function tableRowPlugin() {
 		plugin,
 	};
 }
-
-export class Cells extends Pane {
-	get pool(): PluginPool {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		return this.pool_;
-	}
-}
-
 interface RowConfig {
 	viewProps: ViewProps;
 }
@@ -84,7 +74,7 @@ interface RowConfig {
 export class RowController implements Controller<RowView> {
 	public readonly view: RowView;
 	public readonly viewProps: ViewProps;
-	public readonly cells: Cells;
+	public readonly cells: Pane;
 
 	constructor(doc: Document, config: RowConfig, cellsParams: CellBladeParams[]) {
 		// Receive the bound value from the plugin
@@ -95,7 +85,7 @@ export class RowController implements Controller<RowView> {
 		this.view = new RowView(doc, {
 			viewProps: this.viewProps,
 		});
-		this.cells = new Cells({ container: this.view.element });
+		this.cells = new Pane({ container: this.view.element });
 		for (const cellParams of cellsParams) {
 			const api = this.cells.addBlade(cellParams);
 			if (cellParams.width) {
@@ -112,7 +102,8 @@ export class RowApi extends BladeApi<LabelController<RowController>> {}
 
 // Create a class name generator from the view name
 // ClassName('tmp') will generate a CSS class name like `tp-tmpv`
-const className = ClassName('row');
+const className1 = ClassName('table');
+const className2 = ClassName('row');
 
 // Custom view class should implement `View` interface
 export class RowView implements View {
@@ -121,7 +112,7 @@ export class RowView implements View {
 	constructor(doc: Document, config: RowConfig) {
 		// Create a root element for the plugin
 		this.element = doc.createElement('div');
-		this.element.classList.add(className());
+		this.element.classList.add(className1(), className2());
 		// Bind view props to the element
 		config.viewProps.bindClassModifiers(this.element);
 	}
