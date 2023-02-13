@@ -1,8 +1,7 @@
 # tweakpane-table
+![tweakpane-table-demo](https://user-images.githubusercontent.com/6019373/218509852-643003ac-7092-4840-ab03-f919178588a2.png)
 
 Table plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
-
-# For plugin users
 
 ## Installation
 
