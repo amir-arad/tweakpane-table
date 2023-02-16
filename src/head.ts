@@ -1,6 +1,7 @@
 import {
 	BaseBladeParams,
 	BladeApi,
+	BladeController,
 	BladePlugin,
 	ClassName,
 	Controller,
@@ -57,17 +58,21 @@ export const tableHeadPlugin: BladePlugin<TableHeadParams> = {
 		});
 	},
 
-	api(args) {
-		if (!(args.controller instanceof LabelController)) {
+	api({ controller }) {
+		if (!(controller instanceof LabelController)) {
 			return null;
 		}
-		if (!(args.controller.valueController instanceof TableHeadController)) {
+		if (!(controller.valueController instanceof TableHeadController)) {
 			return null;
 		}
-		return new BladeApi<LabelController<TableHeadController>>(args.controller);
+		return new HeadApi(controller);
 	},
 };
-
+export class HeadApi extends BladeApi<LabelController<TableHeadController>> {
+	getCell(i: number) {
+		return this.controller_.valueController.cellsApis[i];
+	}
+}
 interface HeadConfig {
 	viewProps: ViewProps;
 }
@@ -77,6 +82,7 @@ export class TableHeadController implements Controller<HeadView> {
 	public readonly view: HeadView;
 	public readonly viewProps: ViewProps;
 	public readonly headers: Pane;
+	public readonly cellsApis: BladeApi<BladeController<View>>[] = [];
 
 	constructor(doc: Document, config: HeadConfig, headersParams: HeaderParams[]) {
 		// Receive the bound value from the plugin
@@ -93,6 +99,7 @@ export class TableHeadController implements Controller<HeadView> {
 			if (headerParams.width) {
 				api.element.style.width = headerParams.width;
 			}
+			this.cellsApis.push(api);
 		}
 		this.viewProps.handleDispose(() => {
 			this.headers.dispose();

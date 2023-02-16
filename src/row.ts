@@ -1,6 +1,7 @@
 import {
 	BaseBladeParams,
 	BladeApi,
+	BladeController,
 	BladePlugin,
 	ClassName,
 	Controller,
@@ -52,19 +53,24 @@ export function tableRowPlugin() {
 			});
 		},
 
-		api(args) {
-			if (!(args.controller instanceof LabelController)) {
+		api({ controller }) {
+			if (!(controller instanceof LabelController)) {
 				return null;
 			}
-			if (!(args.controller.valueController instanceof RowController)) {
+			if (!(controller.valueController instanceof RowController)) {
 				return null;
 			}
-			return new BladeApi<LabelController<RowController>>(args.controller);
+			return new RowApi(controller);
 		},
 	};
 	return {
 		plugin,
 	};
+}
+export class RowApi extends BladeApi<LabelController<RowController>> {
+	getCell(i: number) {
+		return this.controller_.valueController.cellsApis[i];
+	}
 }
 interface RowConfig {
 	viewProps: ViewProps;
@@ -75,6 +81,7 @@ export class RowController implements Controller<RowView> {
 	public readonly view: RowView;
 	public readonly viewProps: ViewProps;
 	public readonly cells: Pane;
+	public readonly cellsApis: BladeApi<BladeController<View>>[] = [];
 
 	constructor(doc: Document, config: RowConfig, cellsParams: CellBladeParams[]) {
 		// Receive the bound value from the plugin
@@ -91,6 +98,7 @@ export class RowController implements Controller<RowView> {
 			if (cellParams.width) {
 				api.element.style.width = cellParams.width;
 			}
+			this.cellsApis.push(api);
 		}
 		this.viewProps.handleDispose(() => {
 			this.cells.dispose();
