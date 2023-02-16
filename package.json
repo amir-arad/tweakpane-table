@@ -1,6 +1,6 @@
 {
     "name": "tweakpane-table",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Table plugin for Tweakpane",
     "repository": "git@github.com:amir-arad/tweakpane-table.git",
     "main": "dist/tweakpane-table.js",
