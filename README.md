@@ -1,4 +1,5 @@
 # tweakpane-table
+
 ![tweakpane-table-demo](https://user-images.githubusercontent.com/6019373/218509852-643003ac-7092-4840-ab03-f919178588a2.png)
 
 Table plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
@@ -47,7 +48,9 @@ pane.registerPlugin(TweakpaneTablePlugin);
 ```
 
 ## Usage
+
 Headers are just labels, Cells are just blades.
+
 ```js
 // add header row
 pane.addBlade({
@@ -81,5 +84,43 @@ pane.addBlade({
             value: 'LDG',
         },
     ],
+});
+```
+
+## Advanced Usage
+
+Actually, every row is managed by a horizontal `Pane`.
+Access the row pane using `.getPane()` to add inputs, monitors, buttons or blades. It is possible to add `width` property to all of them.
+
+Hint: You can register other plugins to the row Pane!
+
+```js
+const rowPane = pane
+    .addBlade({
+        view: 'tableRow',
+        label: `#1`,
+    })
+    .getPane(); // notice this! accessing the row pane
+
+// now just add stuff
+rowPane.registerPlugin(SomePlugin);
+const PARAMS = {
+    speed: 0.5,
+};
+rowPane.addBlade({
+    view: 'text',
+    width: '100px',
+    parse: (v) => String(v),
+    value: `effect-0${i}`,
+});
+pane.addInput(PARAMS, 'speed');
+pane.addMonitor(PARAMS, 'speed', {
+    view: 'graph',
+    min: -1,
+    max: +1,
+});
+rowPane.addButton({
+    title: 'del',
+    width: '50px',
 });
 ```

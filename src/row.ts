@@ -1,12 +1,19 @@
 import {
 	BaseBladeParams,
+	Bindable,
 	BladeApi,
 	BladeController,
 	BladePlugin,
+	ButtonApi,
+	ButtonParams,
 	ClassName,
 	Controller,
+	InputBindingApi,
+	InputParams,
 	LabelController,
 	LabelPropsObject,
+	MonitorBindingApi,
+	MonitorParams,
 	ParamsParsers,
 	ValueMap,
 	View,
@@ -19,12 +26,13 @@ import { Pane } from 'tweakpane';
 export interface TableRowParams extends BaseBladeParams {
 	view: 'tableRow';
 	label: string;
-	cells: Array<CellBladeParams>;
+	cells?: Array<CellBladeParams>;
 }
 
-export interface CellBladeParams extends BaseBladeParams {
+export interface Width {
 	width?: string;
 }
+export interface CellBladeParams extends BaseBladeParams, Width {}
 
 export function tableRowPlugin() {
 	const plugin: BladePlugin<TableRowParams> = {
@@ -49,7 +57,11 @@ export function tableRowPlugin() {
 				props: ValueMap.fromObject<LabelPropsObject>({
 					label: args.params.label,
 				}),
-				valueController: new RowController(args.document, { viewProps: args.viewProps }, args.params.cells),
+				valueController: new RowController(
+					args.document,
+					{ viewProps: args.viewProps },
+					args.params.cells || []
+				),
 			});
 		},
 
@@ -69,19 +81,59 @@ export function tableRowPlugin() {
 }
 export class RowApi extends BladeApi<LabelController<RowController>> {
 	getCell(i: number) {
-		return this.controller_.valueController.cellsApis[i];
+		return this.controller_.valueController.cells.children[i];
+	}
+	getPane() {
+		return this.controller_.valueController.cells;
 	}
 }
 interface RowConfig {
 	viewProps: ViewProps;
 }
 
+class RowPane extends Pane {
+	addInput<O extends Bindable, Key extends keyof O>(
+		object: O,
+		key: Key,
+		opt_params?: InputParams & Width
+	): InputBindingApi<unknown, O[Key]> {
+		const api = super.addInput(object, key, opt_params);
+		if (opt_params?.width) {
+			api.element.style.width = opt_params.width;
+		}
+		return api;
+	}
+	addMonitor<O extends Bindable, Key extends keyof O>(
+		object: O,
+		key: Key,
+		opt_params?: MonitorParams & Width
+	): MonitorBindingApi<O[Key]> {
+		const api = super.addMonitor(object, key, opt_params);
+		if (opt_params?.width) {
+			api.element.style.width = opt_params.width;
+		}
+		return api;
+	}
+	addButton(params: ButtonParams & Width): ButtonApi {
+		const api = super.addButton(params);
+		if (params.width) {
+			api.element.style.width = params.width;
+		}
+		return api;
+	}
+	addBlade(params: CellBladeParams): BladeApi<BladeController<View>> {
+		const api = super.addBlade(params);
+		if (params.width) {
+			api.element.style.width = params.width;
+		}
+		return api;
+	}
+}
 // Custom controller class should implement `Controller` interface
 export class RowController implements Controller<RowView> {
 	public readonly view: RowView;
 	public readonly viewProps: ViewProps;
-	public readonly cells: Pane;
-	public readonly cellsApis: BladeApi<BladeController<View>>[] = [];
+	public readonly cells: RowPane;
 
 	constructor(doc: Document, config: RowConfig, cellsParams: CellBladeParams[]) {
 		// Receive the bound value from the plugin
@@ -92,13 +144,9 @@ export class RowController implements Controller<RowView> {
 		this.view = new RowView(doc, {
 			viewProps: this.viewProps,
 		});
-		this.cells = new Pane({ container: this.view.element });
+		this.cells = new RowPane({ container: this.view.element });
 		for (const cellParams of cellsParams) {
-			const api = this.cells.addBlade(cellParams);
-			if (cellParams.width) {
-				api.element.style.width = cellParams.width;
-			}
-			this.cellsApis.push(api);
+			this.cells.addBlade(cellParams);
 		}
 		this.viewProps.handleDispose(() => {
 			this.cells.dispose();
