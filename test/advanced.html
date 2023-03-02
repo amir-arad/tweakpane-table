@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title></title>
+        <style>
+            /* size manipulation according to: https://github.com/cocopon/tweakpane/issues/46#issuecomment-633388907  */
+
+            /* Default wrapper view */
+            .tableContainer {
+                width: 450px;
+            }
+
+            /* Blades view */
+            .tableContainer .tp-lblv_v {
+                min-width: fit-content;
+            }
+
+            .tp-lblv_l {
+                min-width: fit-content;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../node_modules/tweakpane/dist/tweakpane.js"></script>
+        <script src="../dist/tweakpane-table.js"></script>
+        <script>
+            const rootElm = document.createElement('div');
+            rootElm.classList = 'tableContainer';
+            document.body.appendChild(rootElm);
+            const params = {
+                prop: 3,
+            };
+            // const pane = new Tweakpane.Pane({ container: rootElm });
+            const pane = new Tweakpane.Pane();
+            pane.element.parentElement.classList = 'tableContainer';
+
+            // Register plugin
+            pane.registerPlugin(TweakpaneTablePlugin);
+
+            pane.addBlade({
+                view: 'tableHead',
+                label: 'Effects',
+                headers: [
+                    { label: 'Name', width: '100px' },
+                    { label: 'Type', width: '50px' },
+                    { label: 'Link', width: '50px' },
+                    { label: 'Trigger', width: '50px' },
+                    { label: 'Delete', width: '50px' },
+                ],
+            });
+            for (let i = 0; i < 3; i++) {
+                const row = pane.addBlade({
+                    view: 'tableRow',
+                    label: `#${i}`,
+                    cells: [],
+                });
+                const rowPane = row.getPane();
+                rowPane.addBlade({
+                    view: 'text',
+                    width: '100px',
+                    parse: (v) => String(v),
+                    value: `effect-0${i}`,
+                });
+                rowPane.addBlade({
+                    view: 'list',
+                    width: '50px',
+                    options: [],
+                    value: '',
+                });
+                rowPane.addBlade({
+                    view: 'list',
+                    width: '50px',
+                    options: [],
+                    value: '',
+                });
+                rowPane.addButton({
+                    title: 'trig',
+                    width: '50px',
+                });
+                rowPane.addButton({
+                    title: 'del',
+                    width: '50px',
+                });
+            }
+            pane.addButton({
+                title: 'add',
+                width: '50px',
+            });
+            window.pane = pane;
+        </script>
+    </body>
+</html>
