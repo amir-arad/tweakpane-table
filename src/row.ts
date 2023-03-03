@@ -47,7 +47,7 @@ export function tableRowPlugin() {
 			const result = parseParams<TableRowParams>(params, {
 				view: p.required.constant('tableRow'),
 				label: p.required.string,
-				cells: p.required.array(p.required.custom<BaseBladeParams>((p) => p as BaseBladeParams)), // TODO validate against plugin pool
+				cells: p.optional.array(p.required.custom<BaseBladeParams>((p) => p as BaseBladeParams)), // TODO validate against plugin pool
 			});
 			return result ? { params: result } : null;
 		},
