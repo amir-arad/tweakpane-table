@@ -7,11 +7,12 @@ import {
 	Controller,
 	LabelController,
 	LabelPropsObject,
-	ParamsParsers,
+	LabeledValueBladeController,
 	ValueMap,
 	View,
 	ViewProps,
-	parseParams,
+	createPlugin,
+	parseRecord,
 } from '@tweakpane/core';
 
 import { Pane } from 'tweakpane';
@@ -27,7 +28,7 @@ export interface HeaderParams {
 	width?: string;
 }
 
-export const tableHeadPlugin: BladePlugin<TableHeadParams> = {
+export const tableHeadPlugin = createPlugin<BladePlugin<TableHeadParams>>({
 	id: 'tableHeadPlugin',
 	type: 'blade',
 	// This plugin template injects a compiled CSS by @rollup/plugin-replace
@@ -35,8 +36,7 @@ export const tableHeadPlugin: BladePlugin<TableHeadParams> = {
 	css: '__css__',
 
 	accept(params: Record<string, unknown>) {
-		const p = ParamsParsers;
-		const result = parseParams<TableHeadParams>(params, {
+		const result = parseRecord<TableHeadParams>(params, (p) => ({
 			view: p.required.constant('tableHead'),
 			label: p.required.string,
 			headers: p.required.array(
@@ -45,11 +45,11 @@ export const tableHeadPlugin: BladePlugin<TableHeadParams> = {
 					width: p.optional.string,
 				})
 			),
-		});
+		}));
 		return result ? { params: result } : null;
 	},
 	controller(args) {
-		return new LabelController(args.document, {
+		return new LabeledValueBladeController(args.document, {
 			blade: args.blade,
 			props: ValueMap.fromObject<LabelPropsObject>({
 				label: args.params.label,
@@ -67,7 +67,7 @@ export const tableHeadPlugin: BladePlugin<TableHeadParams> = {
 		}
 		return new HeadApi(controller);
 	},
-};
+});
 export class HeadApi extends BladeApi<LabelController<TableHeadController>> {
 	getCell(i: number) {
 		return this.controller_.valueController.cellsApis[i];
@@ -95,7 +95,7 @@ export class TableHeadController implements Controller<HeadView> {
 		});
 		this.headers = new Pane({ container: this.view.element });
 		for (const headerParams of headersParams) {
-			const api = this.headers.addInput({ [headerParams.label]: true }, headerParams.label);
+			const api = this.headers.addBinding({ [headerParams.label]: true }, headerParams.label);
 			if (headerParams.width) {
 				api.element.style.width = headerParams.width;
 			}

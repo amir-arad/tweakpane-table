@@ -1,6 +1,8 @@
 import {
 	BaseBladeParams,
 	Bindable,
+	BindingApi,
+	BindingParams,
 	BladeApi,
 	BladeController,
 	BladePlugin,
@@ -8,17 +10,13 @@ import {
 	ButtonParams,
 	ClassName,
 	Controller,
-	InputBindingApi,
-	InputParams,
 	LabelController,
 	LabelPropsObject,
-	MonitorBindingApi,
-	MonitorParams,
-	ParamsParsers,
 	ValueMap,
 	View,
 	ViewProps,
-	parseParams,
+	createPlugin,
+	parseRecord,
 } from '@tweakpane/core';
 
 import { Pane } from 'tweakpane';
@@ -34,52 +32,42 @@ export interface Width {
 }
 export interface CellBladeParams extends BaseBladeParams, Width {}
 
-export function tableRowPlugin() {
-	const plugin: BladePlugin<TableRowParams> = {
-		id: 'tableRowPlugin',
-		type: 'blade',
-		// This plugin template injects a compiled CSS by @rollup/plugin-replace
-		// See rollup.config.js for details
-		css: '__css__',
+export const tableRowPlugin = createPlugin<BladePlugin<TableRowParams>>({
+	id: 'tableRowPlugin',
+	type: 'blade',
+	// This plugin template injects a compiled CSS by @rollup/plugin-replace
+	// See rollup.config.js for details
+	css: '__css__',
 
-		accept(params: Record<string, unknown>) {
-			const p = ParamsParsers;
-			const result = parseParams<TableRowParams>(params, {
-				view: p.required.constant('tableRow'),
-				label: p.required.string,
-				cells: p.optional.array(p.required.custom<BaseBladeParams>((p) => p as BaseBladeParams)), // TODO validate against plugin pool
-			});
-			return result ? { params: result } : null;
-		},
-		controller(args) {
-			return new LabelController(args.document, {
-				blade: args.blade,
-				props: ValueMap.fromObject<LabelPropsObject>({
-					label: args.params.label,
-				}),
-				valueController: new RowController(
-					args.document,
-					{ viewProps: args.viewProps },
-					args.params.cells || []
-				),
-			});
-		},
+	accept(params: Record<string, unknown>) {
+		const result = parseRecord<TableRowParams>(params, (p) => ({
+			view: p.required.constant('tableRow'),
+			label: p.required.string,
+			cells: p.optional.array(p.required.custom<BaseBladeParams>((p) => p as BaseBladeParams)), // TODO validate against plugin pool
+		}));
+		return result ? { params: result } : null;
+	},
+	controller(args) {
+		return new LabelController(args.document, {
+			blade: args.blade,
+			props: ValueMap.fromObject<LabelPropsObject>({
+				label: args.params.label,
+			}),
+			valueController: new RowController(args.document, { viewProps: args.viewProps }, args.params.cells || []),
+		});
+	},
 
-		api({ controller }) {
-			if (!(controller instanceof LabelController)) {
-				return null;
-			}
-			if (!(controller.valueController instanceof RowController)) {
-				return null;
-			}
-			return new RowApi(controller);
-		},
-	};
-	return {
-		plugin,
-	};
-}
-export class RowApi extends BladeApi<LabelController<RowController>> {
+	api({ controller }) {
+		if (!(controller instanceof LabelController)) {
+			return null;
+		}
+		if (!(controller.valueController instanceof RowController)) {
+			return null;
+		}
+		return new RowBladeApi(controller);
+	},
+});
+export class RowBladeApi extends BladeApi<LabelController<RowController>> {
 	getCell(i: number) {
 		return this.controller_.valueController.cells.children[i];
 	}
@@ -92,23 +80,12 @@ interface RowConfig {
 }
 
 class RowPane extends Pane {
-	addInput<O extends Bindable, Key extends keyof O>(
+	addBinding<O extends Bindable, Key extends keyof O>(
 		object: O,
 		key: Key,
-		opt_params?: InputParams & Width
-	): InputBindingApi<unknown, O[Key]> {
-		const api = super.addInput(object, key, opt_params);
-		if (opt_params?.width) {
-			api.element.style.width = opt_params.width;
-		}
-		return api;
-	}
-	addMonitor<O extends Bindable, Key extends keyof O>(
-		object: O,
-		key: Key,
-		opt_params?: MonitorParams & Width
-	): MonitorBindingApi<O[Key]> {
-		const api = super.addMonitor(object, key, opt_params);
+		opt_params?: BindingParams & Width
+	): BindingApi<unknown, O[Key]> {
+		const api = super.addBinding(object, key, opt_params);
 		if (opt_params?.width) {
 			api.element.style.width = opt_params.width;
 		}

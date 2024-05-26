@@ -113,12 +113,7 @@ rowPane.addBlade({
     parse: (v) => String(v),
     value: `effect-0${i}`,
 });
-pane.addInput(PARAMS, 'speed');
-pane.addMonitor(PARAMS, 'speed', {
-    view: 'graph',
-    min: -1,
-    max: +1,
-});
+pane.addBinding(PARAMS, 'speed');
 rowPane.addButton({
     title: 'del',
     width: '50px',
