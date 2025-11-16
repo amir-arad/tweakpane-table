@@ -1,8 +1,8 @@
 # Migration Guides
 
-## Migration Guide: tweakpane-table v0.4.x to v0.5.x
+## Migration Guide: tweakpane-table v0.3.x to v0.4.x
 
-Version 0.5.0 includes a **structural refactor** that removes the internal `Pane` dependency and implements proper horizontal layout containers. This fixes the vertical cell stacking issues and provides a more robust architecture.
+Version 0.4.0 includes a **structural refactor** that removes the internal `Pane` dependency and implements proper horizontal layout containers. This fixes the vertical cell stacking issues and provides a more robust architecture.
 
 ### Overview
 
@@ -13,7 +13,7 @@ Version 0.5.0 includes a **structural refactor** that removes the internal `Pane
 ### Requirements
 
 - **Tweakpane v4.0.5 or higher** (no change from v0.4.x)
-- **tweakpane-table v0.5.0 or higher**
+- **tweakpane-table v0.4.0 or higher**
 
 ### Breaking Changes
 
@@ -35,7 +35,7 @@ rowPane.addBinding(PARAMS, 'speed', { width: '100px' });
 rowPane.addButton({ title: 'Delete', width: '80px' });
 ```
 
-**After (v0.5.x):**
+**After (v0.4.x):**
 ```javascript
 const row = pane.addBlade({
   view: 'tableRow',
@@ -71,7 +71,7 @@ const cell = head.getCell(0); // Returns BindingApi
 cell.on('change', ...); // Could listen to events
 ```
 
-**After (v0.5.x):**
+**After (v0.4.x):**
 ```javascript
 const head = pane.addBlade({
   view: 'tableHead',
@@ -173,7 +173,7 @@ row.addCell({ view: 'separator' });
 
 ### Migration Checklist
 
-- [ ] Update `tweakpane-table` to v0.5.0 or higher
+- [ ] Update `tweakpane-table` to v0.4.0 or higher
 - [ ] Find all uses of `.getPane()`:
   ```bash
   grep -r "\.getPane()" src/
@@ -189,7 +189,7 @@ row.addCell({ view: 'separator' });
 
 ### Quick Reference: API Mapping
 
-| v0.4.x (Old) | v0.5.x (New) |
+| v0.3.x (Old) | v0.4.x (New) |
 |-------------|-------------|
 | `row.getPane().addBlade({view: 'text', ...})` | `row.addCell({view: 'text', ...})` |
 | `row.getPane().addBinding(obj, key, {...})` | `row.addCell({view: 'binding', ...})` (requires params adaptation) |
@@ -222,7 +222,7 @@ npm run build
 
 **Error:** `TypeError: row.getPane is not a function`
 
-**Solution:** This is expected in v0.5.x. Replace with `.addCell()`:
+**Solution:** This is expected in v0.4.x. Replace with `.addCell()`:
 
 ```javascript
 // ❌ Old
@@ -237,7 +237,7 @@ row.addCell({ view: 'text', value: 'hello' });
 
 **Error:** `TypeError: cell.on is not a function`
 
-**Solution:** In v0.5.x, header cells are simple HTMLElements, not BindingApi instances. Headers are meant to be static labels. If you need interactive headers, consider using a table row instead.
+**Solution:** In v0.4.x, header cells are simple HTMLElements, not BindingApi instances. Headers are meant to be static labels. If you need interactive headers, consider using a table row instead.
 
 #### Width Not Applied
 
@@ -285,7 +285,7 @@ for (let i = 0; i < 3; i++) {
 }
 ```
 
-**After (v0.5.x):**
+**After (v0.4.x):**
 ```javascript
 for (let i = 0; i < 3; i++) {
   const row = pane.addBlade({

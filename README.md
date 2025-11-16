@@ -4,15 +4,14 @@
 
 Table plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
 
-**✨ Version 0.5.0 - Structural Refactor for Robust Horizontal Layouts!**
+**✨ Version 0.4.0 - Structural Refactor for Robust Horizontal Layouts!**
 
-- For Tweakpane v4: Use tweakpane-table v0.5.x
+- For Tweakpane v4: Use tweakpane-table v0.4.x
 - For Tweakpane v3: Use tweakpane-table v0.3.x
 
 📖 **Documentation:**
 - **Upgrading?** See the [Migration Guide](./MIGRATION.md)
-  - v0.3.x → v0.4.x: [Tweakpane v3 to v4](./MIGRATION.md#migration-guide-tweakpane-table-v3-to-v4)
-  - v0.4.x → v0.5.x: [API Changes](./MIGRATION.md#migration-guide-tweakpane-table-v04x-to-v05x)
+  - v0.3.x → v0.4.x: [Tweakpane v3 to v4](./MIGRATION.md#migration-guide-tweakpane-table-v3-to-v4), [API Changes](./MIGRATION.md#migration-guide-tweakpane-table-v04x-to-v05x)
 - **Developing plugins?** See [Tweakpane Integration Guide](./TWEAKPANE_INTEGRATION.md)
   - CSS variables and theming
   - Creating horizontal layouts

@@ -1,6 +1,6 @@
 # Tweakpane v4 Integration Guide
 
-This document captures deep knowledge about Tweakpane v4's architecture, CSS system, and integration patterns learned during the development of tweakpane-table v0.5.0.
+This document captures deep knowledge about Tweakpane v4's architecture, CSS system, and integration patterns learned during the development of tweakpane-table v0.4.0.
 
 ## Table of Contents
 
@@ -648,4 +648,4 @@ If you need to understand how Tweakpane implements certain features:
 **Document Version**: 1.0
 **Last Updated**: 2025-11-16
 **Tweakpane Version**: 4.0.5+
-**Author**: Generated during tweakpane-table v0.5.0 development
+**Author**: Generated during tweakpane-table v0.4.0 development
