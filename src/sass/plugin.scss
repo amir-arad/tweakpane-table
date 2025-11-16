@@ -1,57 +1,107 @@
 // Import core styles
-@import '../../node_modules/@tweakpane/core/lib/sass/plugin';
+@use '../../node_modules/@tweakpane/core/lib/sass/tp';
 
-// Additional style for the plugin
+// Tweakpane Table Plugin Styles
+// This plugin creates horizontal table layouts without using Pane containers
 
-.#{$prefix}-tablev .tp-rotv {
-	box-shadow: none;
-}
+// ============================================================================
+// Horizontal Containers
+// ============================================================================
 
-.#{$prefix}-tablev .tp-brkv {
+// Table header horizontal container
+.#{tp.$prefix}-headv {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
-	width: fit-content;
-	background-color: transparent;
-}
-// internal table row
-.#{$prefix}-tablev .tp-rotv_c {
-	margin-top: 0px;
+	align-items: stretch;
 	width: 100%;
 }
 
-// cell (outer)
-.#{$prefix}-tablev .tp-rotv_c > * {
-	margin-top: 0px;
+// Table row horizontal container
+.#{tp.$prefix}-rowv {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	width: 100%;
 }
 
-// cell (inner)
-.#{$prefix}-tablev .tp-lblv {
-	padding-left: 0px;
-}
-// last cell (inner)
-.#{$prefix}-tablev .tp-lblv.tp-v-lst {
-	padding-right: 0px;
+// ============================================================================
+// Cell Wrappers
+// ============================================================================
+
+// Header cell wrapper
+.#{tp.$prefix}-headcv {
+	flex: 1; // Default: equal width distribution
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	// Spacing between cells
+	& + & {
+		margin-left: tp.$separator-width;
+	}
 }
 
-// cell label in table row
-.#{$prefix}-rowv .tp-lblv_l {
+// Row cell wrapper
+.#{tp.$prefix}-rowcv {
+	flex: 1; // Default: equal width distribution
+	display: flex;
+	align-items: stretch;
+
+	// Spacing between cells
+	& + & {
+		margin-left: tp.$separator-width;
+	}
+
+	// Cell blades should fill the wrapper
+	> * {
+		flex: 1;
+		min-width: 0; // Allow flex shrinking
+	}
+}
+
+// ============================================================================
+// Header Cells
+// ============================================================================
+
+// Header text element
+.#{tp.$prefix}-headcv_t {
+	color: tp.cssVar('label-fg');
+	font-weight: 500;
+	text-align: center;
+	pointer-events: none;
+	user-select: none;
+	padding: 4px;
+}
+
+// ============================================================================
+// Blade Integration
+// ============================================================================
+
+// Hide labels inside row cells (data cells don't need labels, the row label is enough)
+.#{tp.$prefix}-rowcv .tp-lblv_l {
 	display: none;
 }
 
-// cell value in table head
-.#{$prefix}-headv .tp-lblv_v {
-	display: none;
-}
-
-// cell value
-.#{$prefix}-tablev .tp-lblv_v {
+// Row cell blade values should fill the space
+.#{tp.$prefix}-rowcv .tp-lblv_v {
 	min-width: auto;
 	flex: 1;
 }
 
-.#{$prefix}-tablev .tp-rotv.tp-rotv-expanded .tp-rotv_c,
-.#{$prefix}-tablev .tp-fldv.tp-fldv-expanded > .tp-fldv_c {
-	padding-bottom: 0px;
-	padding-top: 0px;
+// Remove padding from blades inside cells
+.#{tp.$prefix}-rowcv .tp-lblv {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+// ============================================================================
+// Folder/Expanded Containers
+// ============================================================================
+
+// Remove extra padding from folders inside cells
+.#{tp.$prefix}-rowcv .tp-fldv.tp-fldv-expanded > .tp-fldv_c {
+	padding-bottom: 0;
+	padding-top: 0;
 }

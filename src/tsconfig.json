@@ -3,6 +3,7 @@
 		"lib": ["DOM", "ES2015"],
 		"moduleResolution": "Node",
 		"strict": true,
-		"target": "ES6"
+		"target": "ES6",
+		"skipLibCheck": true
 	}
 }

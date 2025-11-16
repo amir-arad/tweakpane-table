@@ -3,6 +3,14 @@
     <head>
         <meta charset="UTF-8" />
         <title></title>
+        <script type="importmap">
+            {
+                "imports": {
+                    "tweakpane": "../node_modules/tweakpane/dist/tweakpane.js",
+                    "@tweakpane/core": "../node_modules/@tweakpane/core/dist/index.js"
+                }
+            }
+        </script>
         <style>
             /* size manipulation according to: https://github.com/cocopon/tweakpane/issues/46#issuecomment-633388907  */
 
@@ -22,20 +30,21 @@
         </style>
     </head>
     <body>
-        <script src="../node_modules/tweakpane/dist/tweakpane.js"></script>
-        <script src="../dist/tweakpane-table.js"></script>
-        <script>
+        <script type="module">
+            import { Pane } from '../node_modules/tweakpane/dist/tweakpane.js';
+            import { plugins as TweakpaneTablePlugin } from '../dist/tweakpane-table.mjs';
+
             const rootElm = document.createElement('div');
             rootElm.classList = 'tableContainer';
             document.body.appendChild(rootElm);
             const params = {
                 prop: 3,
             };
-            // const pane = new Tweakpane.Pane({ container: rootElm });
-            const pane = new Tweakpane.Pane();
+            // const pane = new Pane({ container: rootElm });
+            const pane = new Pane();
             pane.element.parentElement.classList = 'tableContainer';
 
-            // Register plugin
+            // Register plugin (v4 ES module)
             pane.registerPlugin(TweakpaneTablePlugin);
 
             pane.addBlade({
@@ -55,30 +64,32 @@
                     label: `#${i}`,
                     cells: [],
                 });
-                const rowPane = row.getPane();
-                rowPane.addBlade({
+                // Use new addCell() API instead of getPane().addBlade()
+                row.addCell({
                     view: 'text',
                     width: '100px',
                     parse: (v) => String(v),
                     value: `effect-0${i}`,
                 });
-                rowPane.addBlade({
+                row.addCell({
                     view: 'list',
                     width: '50px',
                     options: [],
                     value: '',
                 });
-                rowPane.addBlade({
+                row.addCell({
                     view: 'list',
                     width: '50px',
                     options: [],
                     value: '',
                 });
-                rowPane.addButton({
+                row.addCell({
+                    view: 'button',
                     title: 'trig',
                     width: '50px',
                 });
-                rowPane.addButton({
+                row.addCell({
+                    view: 'button',
                     title: 'del',
                     width: '50px',
                 });

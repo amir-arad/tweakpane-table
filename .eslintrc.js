@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 module.exports = {
 	extends: [
 		'eslint:recommended',
@@ -34,8 +35,5 @@ module.exports = {
 				argsIgnorePattern: '^_',
 			},
 		],
-
-		// TODO: Resolve latest lint warnings
-		'@typescript-eslint/explicit-module-boundary-types': 'off',
 	},
 };

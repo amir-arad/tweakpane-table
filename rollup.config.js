@@ -28,7 +28,7 @@ function getPlugins(css, shouldMinify) {
 			entries: [
 				{
 					find: '@tweakpane/core',
-					replacement: './node_modules/@tweakpane/core/dist/es6/index.js',
+					replacement: './node_modules/@tweakpane/core/dist/index.js',
 				},
 			],
 		}),
@@ -81,15 +81,24 @@ export default async () => {
 	const css = await compileCss();
 	return {
 		input: 'src/index.ts',
-		external: ['tweakpane'],
-		output: {
-			file: `dist/${distName}${postfix}.js`,
-			format: 'umd',
-			globals: {
-				tweakpane: 'Tweakpane',
+		external: ['tweakpane', '@tweakpane/core'],
+		output: [
+			// UMD format (for browser <script> tags)
+			{
+				file: `dist/${distName}${postfix}.js`,
+				format: 'umd',
+				globals: {
+					tweakpane: 'Tweakpane',
+					'@tweakpane/core': 'TweakpaneCore',
+				},
+				name: getUmdName(Package.name),
 			},
-			name: getUmdName(Package.name),
-		},
+			// ES Module format (for modern bundlers and ESM imports)
+			{
+				file: `dist/${distName}${postfix}.mjs`,
+				format: 'es',
+			},
+		],
 		plugins: getPlugins(css, production),
 
 		// Suppress `Circular dependency` warning

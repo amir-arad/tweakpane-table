@@ -4,6 +4,20 @@
 
 Table plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
 
+**✨ Version 0.5.0 - Structural Refactor for Robust Horizontal Layouts!**
+
+- For Tweakpane v4: Use tweakpane-table v0.5.x
+- For Tweakpane v3: Use tweakpane-table v0.3.x
+
+📖 **Documentation:**
+- **Upgrading?** See the [Migration Guide](./MIGRATION.md)
+  - v0.3.x → v0.4.x: [Tweakpane v3 to v4](./MIGRATION.md#migration-guide-tweakpane-table-v3-to-v4)
+  - v0.4.x → v0.5.x: [API Changes](./MIGRATION.md#migration-guide-tweakpane-table-v04x-to-v05x)
+- **Developing plugins?** See [Tweakpane Integration Guide](./TWEAKPANE_INTEGRATION.md)
+  - CSS variables and theming
+  - Creating horizontal layouts
+  - Plugin architecture patterns
+
 ## Installation
 
 ### Browser
@@ -23,7 +37,7 @@ Table plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
 <script>
     const pane = new Tweakpane.Pane();
     pane.element.parentElement.classList = 'tableContainer';
-    pane.registerPlugin(TweakpaneTablePlugin);
+    pane.registerPlugin(TweakpaneTablePlugin.plugins);
 </script>
 ```
 
@@ -31,7 +45,7 @@ Table plugin for [Tweakpane](https://github.com/cocopon/tweakpane/).
 
 ```js
 import { Pane } from 'tweakpane';
-import * as TweakpaneTablePlugin from 'tweakpane-table';
+import { plugins as TweakpaneTablePlugin } from 'tweakpane-table';
 const style = document.createElement('style');
 style.innerHTML = `
     .tableContainer {
@@ -89,38 +103,91 @@ pane.addBlade({
 
 ## Advanced Usage
 
-Actually, every row is managed by a horizontal `Pane`.
-Access the row pane using `.getPane()` to add inputs, monitors, buttons or blades. It is possible to add `width` property to all of them.
-
-Hint: You can register other plugins to the row Pane!
+You can dynamically add cells to a row using the `.addCell()` method. All blade types support the optional `width` property.
 
 ```js
-const rowPane = pane
-    .addBlade({
-        view: 'tableRow',
-        label: `#1`,
-    })
-    .getPane(); // notice this! accessing the row pane
+const row = pane.addBlade({
+    view: 'tableRow',
+    label: `#1`,
+    cells: [], // Start with empty row
+});
 
-// now just add stuff
-rowPane.registerPlugin(SomePlugin);
 const PARAMS = {
     speed: 0.5,
 };
-rowPane.addBlade({
+
+// Add cells dynamically
+row.addCell({
     view: 'text',
     width: '100px',
     parse: (v) => String(v),
-    value: `effect-0${i}`,
+    value: `effect-01`,
 });
-pane.addInput(PARAMS, 'speed');
-pane.addMonitor(PARAMS, 'speed', {
-    view: 'graph',
-    min: -1,
-    max: +1,
+
+row.addCell({
+    view: 'binding',
+    width: '100px',
+    .../* binding params */,
 });
-rowPane.addButton({
+
+row.addCell({
+    view: 'button',
     title: 'del',
     width: '50px',
 });
+
+// Access individual cells
+const firstCell = row.getCell(0); // Returns BladeApi for the first cell
+const allCells = row.cells;      // Returns array of all BladeApi instances
+
+// Listen to cell changes
+firstCell.on('change', (event) => {
+    console.log('Cell value changed:', event.value);
+});
+
+// Remove a cell by index
+row.removeCell(0); // Removes the first cell
+```
+
+**Note:** The `width` parameter sets the flex-basis for each cell, allowing you to control column widths.
+
+## API Reference
+
+### TableRow API
+
+**Methods:**
+- `addCell(params)` - Add a new cell to the row
+  - `params`: Blade parameters with optional `width` property
+  - Returns: `BladeApi` for the created cell
+- `removeCell(index)` - Remove a cell at the specified index
+  - `index`: Zero-based index of the cell to remove
+  - Throws error if index is out of bounds
+- `getCell(index)` - Get the API for a specific cell
+  - `index`: Zero-based index of the cell
+  - Returns: `BladeApi` or `undefined` if not found
+
+**Properties:**
+- `cells` - Array of all cell `BladeApi` instances (read-only)
+
+### Cell Lifecycle
+
+When you remove a cell using `removeCell()`, it is automatically cleaned up from the DOM and internal arrays. Cell indices are updated after removal.
+
+```js
+const row = pane.addBlade({
+    view: 'tableRow',
+    label: 'Example',
+    cells: [],
+});
+
+row.addCell({ view: 'text', value: 'Cell 0' });
+row.addCell({ view: 'text', value: 'Cell 1' });
+row.addCell({ view: 'text', value: 'Cell 2' });
+
+console.log(row.cells.length); // 3
+
+row.removeCell(1); // Remove 'Cell 1'
+
+console.log(row.cells.length); // 2
+console.log(row.getCell(1).value); // Now returns 'Cell 2' (indices shifted)
 ```

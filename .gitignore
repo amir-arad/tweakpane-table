@@ -122,3 +122,5 @@ dist
 .pnp.*
 
 
+Screenshot*.png
+.playwright-mcp/*.png

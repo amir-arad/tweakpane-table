@@ -1,20 +1,17 @@
 import {
 	BaseBladeParams,
+	Blade,
 	BladeApi,
 	BladeController,
 	BladePlugin,
 	ClassName,
-	Controller,
-	LabelController,
-	LabelPropsObject,
-	ParamsParsers,
-	ValueMap,
 	View,
 	ViewProps,
-	parseParams,
+	createPlugin,
+	parseRecord,
 } from '@tweakpane/core';
 
-import { Pane } from 'tweakpane';
+import { applyWidth } from './util';
 
 export interface TableHeadParams extends BaseBladeParams {
 	view: 'tableHead';
@@ -27,16 +24,12 @@ export interface HeaderParams {
 	width?: string;
 }
 
-export const tableHeadPlugin: BladePlugin<TableHeadParams> = {
-	id: 'tableHeadPlugin',
+export const tableHeadPlugin: BladePlugin<TableHeadParams> = createPlugin({
+	id: 'tableHead',
 	type: 'blade',
-	// This plugin template injects a compiled CSS by @rollup/plugin-replace
-	// See rollup.config.js for details
-	css: '__css__',
 
 	accept(params: Record<string, unknown>) {
-		const p = ParamsParsers;
-		const result = parseParams<TableHeadParams>(params, {
+		const result = parseRecord<TableHeadParams>(params, (p) => ({
 			view: p.required.constant('tableHead'),
 			label: p.required.string,
 			headers: p.required.array(
@@ -45,82 +38,120 @@ export const tableHeadPlugin: BladePlugin<TableHeadParams> = {
 					width: p.optional.string,
 				})
 			),
-		});
+		}));
 		return result ? { params: result } : null;
 	},
 	controller(args) {
-		return new LabelController(args.document, {
+		return new TableHeadController(args.document, {
 			blade: args.blade,
-			props: ValueMap.fromObject<LabelPropsObject>({
-				label: args.params.label,
-			}),
-			valueController: new TableHeadController(args.document, { viewProps: args.viewProps }, args.params.headers),
+			viewProps: args.viewProps,
+			label: args.params.label,
+			headers: args.params.headers,
 		});
 	},
 
 	api({ controller }) {
-		if (!(controller instanceof LabelController)) {
-			return null;
-		}
-		if (!(controller.valueController instanceof TableHeadController)) {
+		if (!(controller instanceof TableHeadController)) {
 			return null;
 		}
 		return new HeadApi(controller);
 	},
-};
-export class HeadApi extends BladeApi<LabelController<TableHeadController>> {
-	getCell(i: number) {
-		return this.controller_.valueController.cellsApis[i];
+});
+
+export class HeadApi extends BladeApi<TableHeadController> {
+	/**
+	 * Get the element for a specific header cell
+	 * @param i - Index of the header cell
+	 * @returns The HTMLElement for the header cell
+	 */
+	getCell(i: number): HTMLElement | undefined {
+		return this.controller.cellElements[i];
 	}
 }
+
 interface HeadConfig {
+	blade: Blade;
 	viewProps: ViewProps;
+	label: string;
+	headers: HeaderParams[];
 }
 
-// Custom controller class should implement `Controller` interface
-export class TableHeadController implements Controller<HeadView> {
-	public readonly view: HeadView;
-	public readonly viewProps: ViewProps;
-	public readonly headers: Pane;
-	public readonly cellsApis: BladeApi<BladeController<View>>[] = [];
+// Custom controller class extends BladeController (v4 pattern)
+export class TableHeadController extends BladeController<HeadView> {
+	public readonly cellElements: HTMLElement[] = [];
 
-	constructor(doc: Document, config: HeadConfig, headersParams: HeaderParams[]) {
-		// Receive the bound value from the plugin
+	constructor(doc: Document, config: HeadConfig) {
+		const view = new HeadView(doc, {
+			viewProps: config.viewProps,
+			label: config.label,
+			headers: config.headers,
+		});
 
-		// and also view props
-		this.viewProps = config.viewProps;
-		// Create a custom view
-		this.view = new HeadView(doc, {
-			viewProps: this.viewProps,
-		});
-		this.headers = new Pane({ container: this.view.element });
-		for (const headerParams of headersParams) {
-			const api = this.headers.addInput({ [headerParams.label]: true }, headerParams.label);
-			if (headerParams.width) {
-				api.element.style.width = headerParams.width;
-			}
-			this.cellsApis.push(api);
-		}
-		this.viewProps.handleDispose(() => {
-			this.headers.dispose();
-		});
+		super({ blade: config.blade, view, viewProps: config.viewProps });
+
+		// Store references to cell elements
+		this.cellElements = view.cellElements;
 	}
 }
 
 // Create a class name generator from the view name
-// ClassName('tmp') will generate a CSS class name like `tp-tmpv`
 const className1 = ClassName('table');
 const className2 = ClassName('head');
+const cellClassName = ClassName('headc'); // tp-headcv for header cells
 
-// Custom view class should implement `View` interface
+interface HeadViewConfig {
+	viewProps: ViewProps;
+	label: string;
+	headers: HeaderParams[];
+}
+
+// Custom view class implements View interface
+// Creates a horizontal container with simple text labels (no bindings needed)
 export class HeadView implements View {
 	public readonly element: HTMLElement;
+	public readonly cellElements: HTMLElement[] = [];
 
-	constructor(doc: Document, config: HeadConfig) {
-		// Create a root element for the plugin
-		this.element = doc.createElement('div');
-		this.element.classList.add(className1(), className2());
-		// Bind view props to the element
-		config.viewProps.bindClassModifiers(this.element);
+	constructor(doc: Document, config: HeadViewConfig) {
+		// Create outer container with label
+		const container = doc.createElement('div');
+		container.classList.add('tp-lblv'); // Use Tweakpane's label container class
+
+		// Create label element
+		const labelEl = doc.createElement('div');
+		labelEl.classList.add('tp-lblv_l');
+		labelEl.textContent = config.label;
+		container.appendChild(labelEl);
+
+		// Create value container
+		const valueEl = doc.createElement('div');
+		valueEl.classList.add('tp-lblv_v');
+
+		// Create horizontal header container
+		const headerContainer = doc.createElement('div');
+		headerContainer.classList.add(className1(), className2());
+		config.viewProps.bindClassModifiers(headerContainer);
+
+		// Create header cells
+		for (const headerParams of config.headers) {
+			const cellWrapper = doc.createElement('div');
+			cellWrapper.classList.add(cellClassName());
+
+			// Create simple text element for the header
+			const textEl = doc.createElement('div');
+			textEl.classList.add(cellClassName('t')); // tp-headcv_t for text
+			textEl.textContent = headerParams.label;
+			cellWrapper.appendChild(textEl);
+
+			// Apply width if specified
+			applyWidth(cellWrapper, headerParams.width);
+
+			headerContainer.appendChild(cellWrapper);
+			this.cellElements.push(cellWrapper);
+		}
+
+		valueEl.appendChild(headerContainer);
+		container.appendChild(valueEl);
+
+		this.element = container;
 	}
 }
